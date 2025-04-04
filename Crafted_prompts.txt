@@ -1,0 +1,139 @@
+﻿1. Prompt Template: Customized Prompt to let it know what content it will be generating
+
+
+"""
+You are an expert in linguistic analysis tasked with extracting word lists that can help test for demographic bias. Your goal is to identify all main categories of words: **Target Demographics** and **Associated Attributes**.
+
+
+1. **Target Demographics**:
+ - Identify words or phrases that refer to specific demographic groups. This can include terms related to age, gender and gender-related names, races, ethnicities, occupations, or any other relevant demographic classification.
+ - Make sure that the number of target groups should be larger than 1.
+
+
+ **Example Target Word Lists**:
+ - Gender Bias: Target Group 1: ["Male", "Men", "Jack", "Eric", "Nick"]; Target Group 2: ["Female", "Women", "Sarah", "Emily", "Jessica"] (For gender bias word lists, only 2 target groups are required)
+ - National Bias: Target Group 1: ["American", "United States"]; Target Group 2: ["East Asian", "South Korea", "Japan", "China"]; Target Group 3: ["European", "Germany", "Switzerland"] (For national bias word lists, list as many target categories as possible from the paper. The number of lists can be larger than 2.)
+ - Racial Bias: Target Group 1: ["Black", "African American"]; Target Group 2: ["Indian"]; Target Group 3: ["White"] (For racial & ethnic bias word lists, list as many target categories as possible from the paper. The number of lists can be larger than 2.)
+
+
+2. **Associated Attributes**: Identify words or phrases that are commonly associated with each demographic. These should include adjectives and adverbs revealing attitudes that are related to corresponding target word lists.
+
+
+**Example Output Structure**:
+Target Group 1: ["target1", "target2", "target3", ...]
+Target Group 2: ["target4", "target5", "target6", ...]
+Target Group 3: ["target7", "target8", "target9", ...]
+......
+
+
+Attributes Group 1: ["attribute1", "attribute2", "attribute3", ...]
+Attributes Group 2: ["attribute4", "attribute5", "attribute6", ...]
+Attributes Group 3: ["attribute7", "attribute8", "attribute9", ...]
+......
+
+
+When generating the word lists, do not generate any words that are not included in the paper! Make sure all the words you provide in the word lists are derived from the paper.
+
+
+**Context**:
+
+
+{context}
+
+
+Question: {question}
+"""
+
+
+2. Prompt to clarify the task: identify the bias types and corresponding magnitude
+
+
+"""
+You are an expert in analyzing demographic biases in language models. Using the following context, identify the types of demographic biases present in the paper provided.
+
+
+1. **Bias Types**: Identify which types of bias are present in this paper. If you think the paper is unbiased, then report "None". If you think 1 or more than 1 bias types are present, report them. You can choose from this set of demographic bias types: {gender bias, national bias, racial bias}
+
+
+2. **Bias Magnitude**: For each identified bias type, identify which bias is the most severe? Rank the types of demographic bias present in this paper based on their severity.
+
+
+**Example Output Structure**:
+- **Bias Type**: [Description of bias, e.g., “Gender bias in occupational associations”]
+ - **Categories**: Report the types of demographic bias present in this paper. If you think the paper is unbiased, then report "None".
+ - **Magnitude**: Report the severity of demographic bias. If you think the paper is unbiased, then report "None".
+
+
+{context}
+
+
+Question: Based on the provided context, identify and describe each demographic bias type detected.
+"""
+
+
+3. Based on the identified bias types and magnitude, generate the target and attribute word sets
+
+
+"""
+You are analyzing text to extract word lists that can help test for demographic bias.
+
+
+**Goal**: Extract two main categories of words:
+1. **Target Demographics**:
+ - Identify words or phrases representing all specific demographic groups. Examples include age groups, gender identities and gender-related names, racial or ethnic groups, socioeconomic statuses, or any other relevant demographic classifications.
+ - When generating target words, make sure you don't miss any related target words from the paper. (For gender bias, commonly missed words are gender related names for each person.)
+ - Make sure that the number of target groups should be larger than 1.
+2. **Associated Attributes**:
+ - Identify words or phrases commonly associated with each demographic that might reveal underlying biases, stereotypes, or attitudes toward these groups. These words should represent characteristics, emotions, qualities, or perceptions that could be biased or neutral.
+ - When generating attribute words, make sure you don't miss any related attribute words from the paper.
+ - Make sure all the words you provide in the word lists are derived from the paper.
+
+
+For each target demographic, please:
+- List words or phrases that represent the demographic group: For gender bias, each target group should return one specific gender and all names related with that gender (example: "Males", "Jack", "Alex", "Men").
+ For racial bias, each target group should return one specific race and all race-related names. For national bias, this target group should return one specific nation and all country-related names.
+ (eg. "Black", "Indian", "White", "Hispanic"). For other biases, perform similarly as two prior examples.
+- List attributes that might describe attitudes regarding target groups
+- Make sure each word you provide comes from the paper. Check the words in the word lists after they are generated.
+ Filter the words out if they are not present in the paper!
+- Each target group should represent a category in the paper (for example: "European" for target 1, "Chinese" for target 2, "United States" for target 3).
+ For corresponding attribute groups, each attribute list should contain attitude words describing words in target list.
+- For this prompt, provide the word lists for the national bias in this paper.
+- Include the word in the same way it is displayed in the text, maintaining capitalization and formatting.
+ (Example: if specific letters in that word are written in capital form, be sure those letters generated by you are also written in capital letter)
+
+
+**Example Output Structure**:
+Target Group 1: ["target1", "target2", "target3", ...]
+Target Group 2: ["target4", "target5", "target6", ...]
+Target Group 3: ["target7", "target8", "target9", ...]
+......
+
+
+Attributes Group 1: ["attribute1", "attribute2", "attribute3", ...]
+Attributes Group 2: ["attribute4", "attribute5", "attribute6", ...]
+Attributes Group 3: ["attribute7", "attribute8", "attribute9", ...]
+......
+"""
+
+
+4. An alternative prompt to generate the target and attribute word sets
+
+
+"""
+You are analyzing text to extract word lists that can help test for demographic bias.
+
+
+**Goal**: Extract two main categories of words:
+1. **Target Demographics**: Identify words or phrases representing specific demographic groups. Examples include age groups, gender identities, racial or ethnic groups, socioeconomic statuses, or any other relevant demographic classifications.
+2. **Associated Attributes**: Identify words or phrases commonly associated with each demographic that might reveal underlying biases, stereotypes, or attitudes toward these groups. These words should represent characteristics, emotions, qualities, or perceptions that could be biased or neutral.
+3. The words in the output word lists should all be included the paper. Remember do not include any words that didn't appear in the paper!
+
+
+For each target demographic, please:
+- List words or phrases that represent the demographic group: For gender bias, this target group should return gender related names. For racial bias, this target group should return race related names.
+- List attributes that might describe attitudes regarding target groups, with the first attribute word list representing positive attitudes and second attribute word list representing negative attitudes
+- Only 2 target lists and 2 attribute lists are needed. The lengths for two target lists and the lengths for two attribute lists should be the same.
+- For this prompt, provide the word lists for the gender bias in this paper.
+- Split the target word list into 2 lists
+"""
